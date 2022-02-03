@@ -3,6 +3,7 @@ package com.phoenix.web.controllers;
 import com.phoenix.data.dto.ProductDto;
 import com.phoenix.data.models.Product;
 import com.phoenix.service.product.ProductService;
+import com.phoenix.web.exceptions.BusinessLogicException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class ProductRestController {
         return ResponseEntity.ok().body(productList);
     }
     @PostMapping()
-    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto){
+    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) throws BusinessLogicException {
         Product product = productService.createProduct(productDto);
         return ResponseEntity.ok().body(product);
     }
