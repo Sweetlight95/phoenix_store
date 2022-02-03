@@ -3,7 +3,7 @@ package com.phoenix.service.product;
 import com.phoenix.data.dto.ProductDto;
 import com.phoenix.data.models.Product;
 import com.phoenix.data.repository.ProductRepository;
-import com.phoenix.web.exceptions.ProductDoesNotException;
+import com.phoenix.web.exceptions.ProductDoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Product findProductById(Long productId) throws ProductDoesNotException {
+    public Product findProductById(Long productId) throws ProductDoesNotExistException {
         if(productId == null){
             throw new IllegalArgumentException("ID cannot be null");
         }
@@ -30,7 +30,7 @@ public class ProductServiceImpl implements ProductService{
         if(queryResult.isPresent()){
             return queryResult.get();
         }
-        throw new ProductDoesNotException("Product with ID :"+productId +": does not exists");
+        throw new ProductDoesNotExistException("Product with ID :"+productId +": does not exists");
     }
 
     @Override
@@ -38,6 +38,9 @@ public class ProductServiceImpl implements ProductService{
         //product dto is not null
         if(productDto == null){
             throw new IllegalArgumentException("Argument cannot be null");
+        }
+        if(productRepository.findByName(productDto.getName()) != null){
+            throw new ProductDoesNotExistException("");
         }
         Product product = new Product();
         product.setName(productDto.getName());

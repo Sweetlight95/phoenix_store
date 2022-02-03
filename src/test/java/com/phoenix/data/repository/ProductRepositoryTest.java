@@ -64,4 +64,15 @@ class ProductRepositoryTest {
         assertThat(productList).isNotNull();
         assertThat(productList.size()).isEqualTo(4);
     }
+    @Test
+    @DisplayName("Find product by name")
+    void findProductByNameTest(){
+        Product product = productRepository.findByName("Macbook Air").orElse(null);
+        assertThat(product).isNotNull();
+        assertThat(product.getId()).isEqualTo(13);
+        assertThat(product.getPrice()).isEqualTo(18320);
+        assertThat(product.getQuantity()).isEqualTo(4);
+
+        log.info("Product retrieved :: {}", product);
+    }
 }
