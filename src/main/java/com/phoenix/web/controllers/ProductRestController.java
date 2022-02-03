@@ -23,8 +23,12 @@ public class ProductRestController {
         return ResponseEntity.ok().body(productList);
     }
     @PostMapping()
-    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) throws BusinessLogicException {
-        Product product = productService.createProduct(productDto);
-        return ResponseEntity.ok().body(product);
+    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) {
+        try {
+            Product savedProduct = productService.createProduct(productDto);
+            return ResponseEntity.ok().body(savedProduct);
+        } catch (BusinessLogicException | IllegalArgumentException e) {
+           return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
