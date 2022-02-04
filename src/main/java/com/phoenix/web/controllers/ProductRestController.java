@@ -1,10 +1,12 @@
 package com.phoenix.web.controllers;
 
+import com.github.fge.jsonpatch.JsonPatch;
 import com.phoenix.data.dto.ProductDto;
 import com.phoenix.data.models.Product;
 import com.phoenix.service.product.ProductService;
 import com.phoenix.web.exceptions.BusinessLogicException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +31,16 @@ public class ProductRestController {
             return ResponseEntity.ok().body(savedProduct);
         } catch (BusinessLogicException | IllegalArgumentException e) {
            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PatchMapping(path = "/{id}", consumes = "application/json-patch+json")
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody JsonPatch productPatch){
+
+        try {
+            Product updatedProduct = productService.updateProductDetails(id, productPatch);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedProduct);
+        } catch (BusinessLogicException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

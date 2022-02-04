@@ -75,4 +75,25 @@ class ProductRepositoryTest {
 
         log.info("Product retrieved :: {}", product);
     }
+//    @Test
+//    @DisplayName("Update product by ID")
+//    void updateProductByIdTest(){
+//
+//    }
+    @Test
+    @DisplayName("Update a product attribute test")
+    void updateProductAttributeTest(){
+        //check that product exists
+        Product savedProduct = productRepository.findByName("Macbook Air").orElse(null);
+        assertThat(savedProduct).isNotNull();
+        //update product
+        assertThat(savedProduct.getName()).isEqualTo("Macbook Air");
+        assertThat(savedProduct.getPrice()).isEqualTo(18320);
+        savedProduct.setName("Macbook Air 13");
+        savedProduct.setPrice(23420);
+        //save product
+        productRepository.save(savedProduct);
+        assertThat(savedProduct.getName()).isEqualTo("Macbook Air 13");
+        assertThat(savedProduct.getPrice()).isEqualTo(23420);
+    }
 }
