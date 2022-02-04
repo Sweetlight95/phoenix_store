@@ -13,16 +13,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 class ProductServiceImplTest {
 
-    @Test
-    void applyPatchTpProductTest(){
-
-        Product product = new Product();
-        product.setName("Table top");
-        product.setPrice(450);
-        product.setDescription("This is a table top");
-        product.setQuantity(3);
-
-        JsonPatch jsonPatch = ValueNodes.JsonNode.createPathNode().replace("/0/name", "Duke Oracle").remove("/1")
-
-    }
+//    @Test
+//    void applyPatchTpProductTest(){
+//
+//        Product product = new Product();
+//        product.setName("Table top");
+//        product.setPrice(450);
+//        product.setDescription("This is a table top");
+//        product.setQuantity(3);
+//
+//        JsonPatch jsonPatch = ValueNodes.JsonNode.createPathNode().replace("/0/name", "Duke Oracle").remove("/1")
+//
+//    }
 }

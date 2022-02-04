@@ -74,7 +74,7 @@ public class ProductServiceImpl implements ProductService{
     public Product updateProductDetails(Long productId, JsonPatch productPatch) throws BusinessLogicException {
         Optional<Product> productQuery = productRepository.findById(productId);
         if(productQuery.isEmpty()){
-            throw new BusinessLogicException("Product with ID" + productId+"Does not exists");
+            throw new BusinessLogicException("Product with ID " + productId+" Does not exists");
         }
         Product targetProduct = productQuery.get();
 
