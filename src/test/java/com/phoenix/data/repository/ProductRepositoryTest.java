@@ -59,7 +59,7 @@ class ProductRepositoryTest {
     }
     @Test
     @DisplayName("Find all product in the database")
-    void finProductsTest(){
+    void findProductsTest(){
         List<Product> productList = productRepository.findAll();
         assertThat(productList).isNotNull();
         assertThat(productList.size()).isEqualTo(4);
