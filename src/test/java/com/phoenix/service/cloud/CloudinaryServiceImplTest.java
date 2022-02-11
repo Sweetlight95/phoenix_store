@@ -2,6 +2,7 @@ package com.phoenix.service.cloud;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,9 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +37,6 @@ class CloudinaryServiceImplTest {
     @BeforeEach
     void setUp() {
     }
-
     @Test
     @DisplayName("Cloudinary object instantiated test")
     void cloudinaryObjectInstanceTest(){
@@ -39,10 +44,27 @@ class CloudinaryServiceImplTest {
     }
     @Test
     void uploadToCloudinaryTest() throws IOException {
-        File file = new File("src/test/reso`urces/2021-11-29-090801.jpg");
-        assertThat(file.exists()).isTrue();
-        Map<?,?> uploadResult = cloudinaryService.upload(file, ObjectUtils.emptyMap());
+        Path file = Paths.get("src/test/resources/2021-11-29-090801.jpg");
+        assertThat(file.toFile().exists()).isTrue();
+        Map<?,?> uploadResult = cloudinaryService.upload(Files.readAllBytes(file), ObjectUtils.emptyMap());
         log.info("Upload result to cloud -> {}", uploadResult);
         assertThat(uploadResult.get("url")).isNotNull();
     }
+
+    @Test
+    void uploadMultipartToCloudinaryTest() throws IOException{
+        //load the file
+        Path path = Paths.get("src/test/resources/2021-11-29-090801.jpg");
+        assertThat(path.toFile().exists());
+        assertThat(path.getFileName().toString()).isEqualTo("2021-11-29-090801.jpg");
+        //load to multipart
+        MultipartFile multipartFile = new MockMultipartFile(path.getFileName().toString(), path.getFileName().toString(),
+                "img/jpg", Files.readAllBytes(path));
+        assertThat(multipartFile).isNotNull();
+        assertThat(multipartFile.isEmpty()).isFalse();
+        //upload to the cloud
+        Map<?,?> uploadResult = cloudinaryService.upload(multipartFile.getBytes(), ObjectUtils.asMap("overwrite", true  ));
+        assertThat(uploadResult.get("url")).isNotNull();
+    }
+
 }

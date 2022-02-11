@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,8 +25,9 @@ public class ProductRestController {
         List<Product> productList = productService.getAllProduct();
         return ResponseEntity.ok().body(productList);
     }
-    @PostMapping()
-    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) {
+    //, @RequestPart("file") MultipartFile productImage
+    @PostMapping(consumes = {"multipart/form-data"})
+    public ResponseEntity<?> createProduct(@ModelAttribute ProductDto productDto) {
         try {
             Product savedProduct = productService.createProduct(productDto);
             return ResponseEntity.ok().body(savedProduct);

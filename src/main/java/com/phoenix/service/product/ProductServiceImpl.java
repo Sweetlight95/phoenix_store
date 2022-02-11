@@ -1,5 +1,6 @@
 package com.phoenix.service.product;
 
+import com.cloudinary.utils.ObjectUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,13 +9,16 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import com.phoenix.data.dto.ProductDto;
 import com.phoenix.data.models.Product;
 import com.phoenix.data.repository.ProductRepository;
+import com.phoenix.service.cloud.CloudinaryService;
 import com.phoenix.web.exceptions.BusinessLogicException;
 import com.phoenix.web.exceptions.ProductDoesNotExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -23,6 +27,9 @@ public class ProductServiceImpl implements ProductService{
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    CloudinaryService cloudinaryService;
 
     @Override
     public List<Product> getAllProduct() {
@@ -51,7 +58,16 @@ public class ProductServiceImpl implements ProductService{
         if(query.isPresent()){
             throw new BusinessLogicException("Product with name" + productDto.getName() + " already exists");
         }
-        Product product = new Product();
+        Product product  = new Product();
+        try {
+            if(productDto.getImage() != null) {
+                Map<?, ?> uploadResult = cloudinaryService.upload(productDto.getImage().getBytes(),
+                        ObjectUtils.asMap("public_id", "inventory/" + productDto.getImage().getOriginalFilename(), "overwrite", true));
+                product.setImageUrl(uploadResult.get("url").toString());
+            }
+        } catch (IOException g) {
+            g.printStackTrace();
+        }
         product.setName(productDto.getName());
         product.setPrice(productDto.getPrice());
         product.setQuantity(productDto.getQuantity());
